@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<style>
+			.scroll{
+				overflow: hidden;
+			}
+		</style>
+	</head>
+<body>
+	<div class="column scroll">
+		<div class="row">
+			<button onclick="draw();getvalues();">submit</button>
+			<input id="xtotal" required/>
+			<input id="ytotal" required />
+		</div>
+		<div class="row">
+			<canvas id="myCanvas" onclick="showCoords(event)" style="cursor: cell;" width="1910" height="915">
+		</div>
+	</div>
+	<script>
+		var x = screen.height;
+		var y = screen.width;
+		var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		ctx.beginPath();
+		ctx.lineWidth = 1;
+		ctx.lineCap = "square";
+		for(var i=1;i<y;i+=15){
+			ctx.moveTo(i, 0);
+			ctx.lineTo(i, x);
+			ctx.stroke();
+		}
+		for(var j=1;j<x;j+=15){
+			ctx.beginPath();
+			ctx.lineCap = "square";
+			ctx.moveTo(1, j);
+			ctx.lineTo(y, j);
+			ctx.stroke();
+		}
+	</script>
+	
+<script>
+	var x_arr = [], y_arr = [];
+	var x_final_arr = [],y_final_arr = [];
+	function showCoords(event) {
+		var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		var x = event.clientX;
+		var y = event.clientY;
+		var coords = "X coords: " + x + ", Y coords: " + y;
+		x_arr.push(x);
+		y_arr.push(y);
+		console.log(x,y)
+		ctx.beginPath();
+		ctx.arc(x-8, y-28, 5.5, 0, 2 * Math.PI, true);
+		ctx.fillStyle = "blue";
+		ctx.fill();
+	}
+	function draw(){
+		var c = document.getElementById("myCanvas");
+		var ctx = c.getContext("2d");
+		ctx.beginPath();
+		ctx.lineWidth = 2;
+		ctx.lineCap = "square";
+		for(var i=0;i<x_arr.length-1;i++){
+			var c,e,f,k=1;
+			var x1 = x_arr[i];
+			var y1 = y_arr[i];
+			var x2 = x_arr[i+1];
+			var y2 = y_arr[i+1];
+			var a = y2 - y1;
+			var b = x2 - x1;
+			c = (-a * x1) + (b * y1);
+			if(x1<x2){
+				e = x2;
+				f = x1;
+			}
+			else{
+				e = x1;
+				f = x2;
+			}
+			if(Math.abs(f-e<20) || f==e){
+				k = 0.1
+			}
+			for (var j = f; j <= e; j+=k) {
+				var y = (c + (a * j));
+				y = y / b;
+				x_final_arr.push(Math.round(j-8));
+				y_final_arr.push(Math.round(y-28));
+				ctx.fillText(".", j - 8, y - 28,5)
+				ctx.fillStyle = "red";
+				ctx.fill();
+			}
+		}
+	}
+	function getvalues(){
+		document.getElementById('xtotal').value = x_final_arr;
+		document.getElementById('ytotal').value = y_final_arr;
+	}
+</script>
+	<br>
+</body>
+
+</html>	
